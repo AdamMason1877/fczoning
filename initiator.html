@@ -43,8 +43,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
     		initiatorArr= document.getElementById('initiator').value.split("\n")
     		vsan = document.getElementById('vsan').value
     		zonesetname = document.getElementById('zonesetname').value
-    		console.log(targetArr)
-    		console.log(initiatorArr)
 
 			var outputstr = "";
 			var aliasout = "";
@@ -78,7 +76,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
 					} else {window.alert("Errore, PWWN non valido " + initiatorArr[0].split("\t")[1])}
 				}
   			}
-  			console.log(outputstr)
+  			
+  			zonesetout = zonesetout.concat("<br><br>device-alias commit")
+
     		document.getElementById("aliasdiv").innerHTML = aliasout;
     		document.getElementById("output").innerHTML = outputstr;
     		document.getElementById("zonesetdiv").innerHTML = zonesetout;
