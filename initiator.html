@@ -1,0 +1,86 @@
+<!--This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
+
+
+
+<html>
+	<title>SAN-zone generator</title>
+	<head>
+		<meta charset="UTF-8">
+	</head>
+	<body>
+		<center>
+			<h1>Generatore di zoneset</h1>
+			<h2>Target<br></h2>
+			<textarea cols="80" rows="2", id="target" style="width:750px">TCC-N8020-A_0c	50:0a:09:82:80:01:5d:72</textarea><br>
+			<h2>Initiator</h2><br>
+			<textarea cols="80" rows="20", id="initiator" style="width:750px">TCC-UCS1-BLD1_hba0	20:00:00:25:B5:AA:00:01</textarea><br>
+			VSAN: <input id="vsan" type="number">
+			Zoneset name: <input id="zonesetname" type="text">
+			<button type="button" onclick="zoning()">Genera zone!</button><br>
+			<div id="aliasdiv" style="text-align: left; width: 750px"></div><br>
+			<div id="output" style="text-align: left; width: 750px"></div><br><br>
+			<div id="zonesetdiv" style="text-align: left; width: 750px"></div>
+			<br><br><br>©Federico Tabbò, released under GPLv3
+		</center>
+	</body>
+
+	<script>
+		function zoning(){
+    		targetArr = document.getElementById('target').value.split("\n")
+    		if (targetArr.length <2){window.alert("Inserire DUE target")}
+    		initiatorArr= document.getElementById('initiator').value.split("\n")
+    		vsan = document.getElementById('vsan').value
+    		zonesetname = document.getElementById('zonesetname').value
+    		console.log(targetArr)
+    		console.log(initiatorArr)
+
+			var outputstr = "";
+			var aliasout = "";
+			var zonesetout = "";
+			var initiatorLen = initiatorArr.length;
+			var regex = /^([0-9A-F]{2}[:-]){7}([0-9A-F]{2})$/;
+
+			var dateObj = new Date();
+			var month = dateObj.getUTCMonth() + 1; //months from 1-12
+			var day = dateObj.getUTCDate();
+			var year = dateObj.getUTCFullYear();
+			if (day <= 9) {day = "0" + day}
+			if (month <= 9) {month = "0" + month}
+			newdate = year + "" + month + "" + day;
+
+			aliasout = aliasout.concat("device-alias name ",targetArr[0].split("\t")[0]," pwwn ",targetArr[0].split("\t")[1],"<br>")
+			aliasout = aliasout.concat("device-alias name ",targetArr[1].split("\t")[0]," pwwn ",targetArr[1].split("\t")[1],"<br>")
+			zonesetout = zonesetout.concat("zoneset name ",zonesetname,"_",newdate," vsan ",vsan,"<br>")
+
+			for (var i = 0; i < initiatorLen; i++) {
+				if (initiatorArr[i].length > 3){
+					if (regex.test(initiatorArr[0].split("\t")[1]) == true){
+						outputstr = outputstr.concat("zone ",initiatorArr[i].split("\t")[0],"_",targetArr[0].split("\t")[0]," vsan ",vsan,"<br>")
+						outputstr = outputstr.concat("    member device-alias ",initiatorArr[i].split("\t")[0],"<br>")
+						outputstr = outputstr.concat("    member device-alias ",targetArr[0].split("\t")[0],"<br>")
+						outputstr = outputstr.concat("    member device-alias ",targetArr[1].split("\t")[0],"<br>")
+						outputstr = outputstr.concat("<br>");	
+
+						aliasout = aliasout.concat("device-alias name ",initiatorArr[i].split("\t")[0]," pwwn ",initiatorArr[i].split("\t")[1],"<br>")
+						zonesetout = zonesetout.concat("     member ",initiatorArr[i].split("\t")[0],"_",targetArr[0].split("\t")[0],"<br>")
+					} else {window.alert("Errore, PWWN non valido " + initiatorArr[0].split("\t")[1])}
+				}
+  			}
+  			console.log(outputstr)
+    		document.getElementById("aliasdiv").innerHTML = aliasout;
+    		document.getElementById("output").innerHTML = outputstr;
+    		document.getElementById("zonesetdiv").innerHTML = zonesetout;
+  		}
+	</script>
+</html>
