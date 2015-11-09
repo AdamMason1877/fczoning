@@ -65,7 +65,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
 			for (var i = 0; i < initiatorLen; i++) {
 				if (initiatorArr[i].length > 3){
 					if (regex.test(initiatorArr[0].split("\t")[1]) == true){
-						outputstr = outputstr.concat("zone ",initiatorArr[i].split("\t")[0],"_",targetArr[0].split("\t")[0]," vsan ",vsan,"<br>")
+						outputstr = outputstr.concat("zone name ",initiatorArr[i].split("\t")[0],"_",targetArr[0].split("\t")[0]," vsan ",vsan,"<br>")
 						outputstr = outputstr.concat("    member device-alias ",initiatorArr[i].split("\t")[0],"<br>")
 						outputstr = outputstr.concat("    member device-alias ",targetArr[0].split("\t")[0],"<br>")
 						outputstr = outputstr.concat("    member device-alias ",targetArr[1].split("\t")[0],"<br>")
